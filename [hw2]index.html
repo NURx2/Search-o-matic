@@ -1,0 +1,125 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>HW2</title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="[hw2]style.css">
+		<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="content">
+				<img src="logo—tp.svg" alt="ТинькоффПродукт" class="logo">
+				<div class="search">
+					<div class = "in-search">
+						<button type="sumbit" class="search-button">
+							<img src="search.svg" class="search-svg">
+						</button>
+						<input type="text" placeholder="Поиск фильмов по жанрам и актерам" class="search-input">
+						<button type="submit" class="cancel-button">
+							<img src="Vector.svg" class="cancel-svg">
+						</button>
+					</div>
+				</div>
+				<div class="alltags">
+						<a class="tag">Как я встретил мамку</a>
+						<a class="tag">Гоп стоп</a>
+						<a class="tag">Весенний дрозд</a> 
+				</div>
+				<div class = 'search-result' id = 'search-result'></div>
+				<div id="allcards"></div>
+			</div>
+			<footer>© 2019 Тинькофф Прокат</footer>
+		</div>
+		<script>
+			window.onload = () => {
+				const CardFactory = {
+					buildDefault: () => {
+						const card = document.createElement('div')
+						card.classList.add('card')
+						card.innerHTML = '<div class="card-line1"></div><div class="card-line2"></div>'
+						return card
+					},
+					buildImage: (imgSrc) => {
+						const card = document.createElement('div')
+						card.classList.add('card')
+						card.innerHTML = `<img src="${imgSrc}" class="imgCard">`
+						return card
+					},
+					buildText: (header, line1, line2) => {
+						const card = document.createElement('div')
+						card.classList.add('card')
+						card.innerHTML = `<div class="text-line1">${header}</div>
+						<div class="text-line-flex">
+							<div class="text-line2">${line1}</div>
+							<div class="text-line-year">${line2}</div>
+						</div>`
+						return card
+					}
+				}
+
+				const searchForm = document.getElementsByClassName('search')[0]
+				const searchField = document.getElementsByClassName('search-input')[0]
+				const cross = document.getElementsByClassName('cancel-button')[0]
+				const searchResult = document.getElementById('search-result')
+
+				const removeChilds = anchor => {
+					while (anchor.children.length != 0)
+						anchor.removeChild(anchor.children[0])
+				}
+
+				const populateCards = () => {
+					const anchor = document.getElementById('allcards')
+					removeChilds(anchor)
+					for (let i = 0; i != 20; ++i) {
+						if (i % 6 == 2) {
+							anchor.appendChild(CardFactory.buildDefault())
+						} else if (i % 3 == 1) {
+							anchor.appendChild(CardFactory.buildImage('Rectangle.svg'))
+						} else {
+							anchor.appendChild(CardFactory.buildText('Как я встретил', 'Боевик', '2017'))
+						}
+					}
+				}
+
+				searchField.addEventListener('focusin', () => {
+					if (searchField.value.length == 0) {
+						searchForm.classList.toggle('search-active')
+					}
+				})
+				searchField.addEventListener('focusout', () => {
+					if (searchField.value.length == 0) {
+						searchForm.classList.toggle('search-active')
+					}
+				})
+				const crossHandler = () => {
+					if (searchField.value.length != 0) {
+						if (!cross.classList.contains('cancel-button-active'))
+							cross.classList.toggle('cancel-button-active')
+						
+						if (searchField.value.indexOf('Том Хэнкс') != -1) {
+							searchResult.innerText = 'Нашли 82 фильма'
+							populateCards() // TODO:
+						} else {
+							removeChilds(document.getElementById('allcards'))
+							searchResult.innerText = 'Мы не поняли о чем речь ¯\\_(ツ)_/¯ '
+						}
+					} else {
+						cross.classList.remove('cancel-button-active')
+						removeChilds(document.getElementById('allcards'))
+					}
+				}
+				searchField.addEventListener('keydown', crossHandler)
+				searchField.addEventListener('keyup', crossHandler)
+
+				document.addEventListener('scroll', () => {
+					if (searchForm.getBoundingClientRect().top < 10) {
+						searchForm.classList.add('search-expanded')
+					} else {
+						searchForm.classList.remove('search-expanded')
+					}
+				})
+			}
+		</script>
+	</body>
+</html>
