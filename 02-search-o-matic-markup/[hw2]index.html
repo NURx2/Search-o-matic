@@ -82,16 +82,6 @@
 					}
 				}
 
-				searchField.addEventListener('focusin', () => {
-					if (searchField.value.length == 0) {
-						searchForm.classList.toggle('search-active')
-					}
-				})
-				searchField.addEventListener('focusout', () => {
-					if (searchField.value.length == 0) {
-						searchForm.classList.toggle('search-active')
-					}
-				})
 				const crossHandler = () => {
 					if (searchField.value.length != 0) {
 						if (!cross.classList.contains('cancel-button-active'))
@@ -107,10 +97,25 @@
 					} else {
 						cross.classList.remove('cancel-button-active')
 						removeChilds(document.getElementById('allcards'))
+						searchResult.innerText = ''
 					}
 				}
+
+				searchField.addEventListener('focusin', () => {
+					if (searchField.value.length == 0) {
+						searchForm.classList.toggle('search-active')
+					}
+				})
+				searchField.addEventListener('focusout', () => {
+					if (searchField.value.length == 0) {
+						searchForm.classList.toggle('search-active')
+						crossHandler()
+					}
+				})
+		
 				searchField.addEventListener('keydown', crossHandler)
 				searchField.addEventListener('keyup', crossHandler)
+				searchField.addEventListener('keypress', crossHandler)
 
 				document.addEventListener('scroll', () => {
 					if (searchForm.getBoundingClientRect().top < 10) {
