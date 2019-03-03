@@ -119,9 +119,11 @@
 
 				document.addEventListener('scroll', () => {
 					if (searchForm.getBoundingClientRect().top < 10) {
-						searchForm.classList.add('search-expanded')
+						// searchForm.classList.add('search-expanded')
+						searchForm.id = 'search-expanded'
 					} else {
-						searchForm.classList.remove('search-expanded')
+						searchForm.id = ''
+						// searchForm.classList.remove('search-expanded')
 					}
 				})
 			}

@@ -43,10 +43,12 @@ html {
 	top: 0px;
 }
 
-.search-expanded {
-	width: 100vw;
+#search-expanded {
+	width: 99vw;
 	background: rgba(28, 28, 28, 0.8);
 	backdrop-filter: blur(4px);
+	border-radius: 2px;	
+	border-bottom: 2px solid white;
 }
 
 .search-result {
@@ -213,8 +215,8 @@ footer {
 	color:rgba(255, 255, 255, 0.24);
 	margin-left: 20px;
 	margin-right: 36px;
-	margin-top: 330px;
-	margin-bottom: 12px;
+	margin-top: 362px;
+	margin-bottom: 24px;
 	border-radius: 2px;
 }
 
@@ -223,7 +225,6 @@ footer {
 	font-size: 16px;
 	margin-right: 12px;
 	margin-left: 20px;
-	margin-bottom: 20px;
 	color: rgba(255, 255, 255, 0.24);
 	border-radius: 2px;
 }
