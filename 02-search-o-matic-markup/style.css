@@ -28,7 +28,6 @@ html {
 	height: 28px;
 	margin-top: 80px;
 	left: calc(50% - 148px / 2);
-	/* transition: all 1.2s ease-in; */
 	cursor: pointer;
 }
 
@@ -179,7 +178,6 @@ footer {
 	border-radius: 12px;
 	margin-bottom: 24px;
 	cursor: pointer;
-	/* margin-right: 24px; */
 }
 
 .card-line1 {
