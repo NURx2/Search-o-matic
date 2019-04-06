@@ -163,7 +163,6 @@ footer {
 
 #allcards {
 	display: flex;
-	justify-content: space-between;
 	flex-direction: row;
 	flex-wrap: wrap;
 	margin-top: 36px;
@@ -172,11 +171,13 @@ footer {
 }
 
 .card {
-	width: 302px;
-	height: 454px;
 	background: rgba(255, 255, 255, 0.24);
 	border-radius: 12px;
 	margin-bottom: 24px;
+	margin-left: 24px;
+	width: 302px;
+	height: 454px;
+	object-fit: cover;
 	cursor: pointer;
 }
 
@@ -199,10 +200,6 @@ footer {
 	margin-bottom: 68px;
 	background: rgba(255, 255, 255, 0.08);
 	border-radius: 2px;
-}
-
-.imgCard {
-	height: 100%;
 }
 
 .text-line1 {

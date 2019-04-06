@@ -1,4 +1,5 @@
 // 29656d74
+//await - каждое поле в async асинхронно? - иначе, что прерывает await
 window.onload = () => {
   const CardFactory = {
     buildDefault: () => {
@@ -9,18 +10,19 @@ window.onload = () => {
     },
     buildImage: (imgSrc) => {
       const card = document.createElement('div')
-      card.classList.add('card')
-      card.innerHTML = `<img src="${imgSrc}" class="imgCard">`
+      card.innerHTML = `<img src="${imgSrc}" class="card">`
       return card
     },
     buildText: (header, line1, line2) => {
       const card = document.createElement('div')
       card.classList.add('card')
-      card.innerHTML = `<div class="text-line1">${header}</div>
+      card.innerHTML = 
+      `
+      <div class="text-line1">${header}</div>
       <div class="text-line-flex">
-        <div class="text-line2">${line1}</div>
-        <div class="text-line-year">${line2}</div>
-      </div>`
+      <div class="text-line2">${line1}</div>
+      <div class="text-line-year">${line2}</div>
+      `
       return card
     }
   }
@@ -38,19 +40,27 @@ window.onload = () => {
   const populateCards = (data) => {
     let anchor = document.getElementById('allcards')
     removeChilds(anchor)
-    const howManyToShow = Math.min(data.Search.length, 20)
+    const howManyToShow = Math.min(data.Search.length, 8)
 
     for (let i = 0; i != howManyToShow; ++i) {
-      anchor.appendChild(CardFactory.buildDefault())
-      console.log(anchor)
-      // anchor[i] = CardFactory.buildText(data.Search[i].Title, data.Search[i].Type, data.Search[i].Year)
+      anchor.appendChild(CardFactory.buildDefault());
+      (async function () { anchor.replaceChild(
+        CardFactory.buildText(data.Search[i].Title, data.Search[i].Type, data.Search[i].Year),
+        anchor.childNodes[i]
+      )})();
+      (async () => ( 
+        anchor.replaceChild(
+          CardFactory.buildImage(data.Search[i].Poster),
+          anchor.childNodes[i]
+        )
+      ))().catch(() => (
+        anchor.replaceChild(
+          CardFactory.buildText(data.Search[i].Title, data.Search[i].Type, data.Search[i].Year),
+          anchor.childNodes[i]
+        )
+      )); // It is not working with downloading of pictures
     }
 
-    data.Search = data.Search.slice(0, howManyToShow)
-    data.Search.forEach((item, i) => {
-      // setTimeout(() => anchor[i] = CardFactory.buildImage(item.Poster))
-      anchor[i] = CardFactory.buildText(item.Title, item.Type, item.Year)
-    })
     // for (let i = 0; i != 20; ++i) {
     //   if (i % 6 == 2) {
     //     anchor.appendChild(CardFactory.buildDefault())
@@ -64,9 +74,9 @@ window.onload = () => {
 
   let lastReqTime = 0
 
-  const crossHandler = async () => { //
-    if (searchField.value.length > 5) {
-      const diff = 100
+  const crossHandler = async () => {
+    if (searchField.value.length > -1) {
+      const diff = 1000 
       const curReqTime = new Date().getTime()
       let data = {}
       if (curReqTime - lastReqTime > diff) { 
@@ -105,9 +115,7 @@ window.onload = () => {
     }
   })
 
-  searchField.addEventListener('keydown', crossHandler)
-  searchField.addEventListener('keyup', crossHandler)
-  searchField.addEventListener('keypress', crossHandler)
+  searchField.addEventListener('input', crossHandler)
 
   document.addEventListener('scroll', () => {
     if (searchForm.getBoundingClientRect().top < 10) {
