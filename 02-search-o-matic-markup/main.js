@@ -1,5 +1,6 @@
 // 29656d74
 //await - каждое поле в async асинхронно? - иначе, что прерывает await
+//убирать allcards при нажатии на крестик
 window.onload = () => {
   const CardFactory = {
     buildDefault: () => {
@@ -8,9 +9,10 @@ window.onload = () => {
       card.innerHTML = '<div class="card-line1"></div><div class="card-line2"></div>'
       return card
     },
-    buildImage: (imgSrc) => {
+    buildImage: (img) => {
       const card = document.createElement('div')
-      card.innerHTML = `<img src="${imgSrc}" class="card">`
+      img.classList.add('card')
+      card.appendChild(img)
       return card
     },
     buildText: (header, line1, line2) => {
@@ -20,7 +22,7 @@ window.onload = () => {
       `
       <div class="text-line1">${header}</div>
       <div class="text-line-flex">
-      <div class="text-line2">${line1}</div>
+      <div class="text-line2"></div>
       <div class="text-line-year">${line2}</div>
       `
       return card
@@ -43,39 +45,23 @@ window.onload = () => {
     const howManyToShow = Math.min(data.Search.length, 8)
 
     for (let i = 0; i != howManyToShow; ++i) {
-      anchor.appendChild(CardFactory.buildDefault());
-      (async function () { anchor.replaceChild(
-        CardFactory.buildText(data.Search[i].Title, data.Search[i].Type, data.Search[i].Year),
-        anchor.childNodes[i]
-      )})();
-      (async () => ( 
-        anchor.replaceChild(
-          CardFactory.buildImage(data.Search[i].Poster),
-          anchor.childNodes[i]
-        )
-      ))().catch(() => (
-        anchor.replaceChild(
-          CardFactory.buildText(data.Search[i].Title, data.Search[i].Type, data.Search[i].Year),
-          anchor.childNodes[i]
-        )
-      )); // It is not working with downloading of pictures
-    }
+      const myCard = CardFactory.buildText(data.Search[i].Title, data.Search[i].Type, data.Search[i].Year)
+      anchor.appendChild(myCard)
 
-    // for (let i = 0; i != 20; ++i) {
-    //   if (i % 6 == 2) {
-    //     anchor.appendChild(CardFactory.buildDefault())
-    //   } else if (i % 3 == 1) {
-    //     anchor.appendChild(CardFactory.buildImage('Rectangle.svg'))
-    //   } else {
-    //     anchor.appendChild(CardFactory.buildText('Как я встретил', 'Боевик', '2017'))
-    //   }
-    // }
+      const img = document.createElement('img')
+      img.src = data.Search[i].Poster
+      img.onload = () => {
+        anchor.replaceChild(
+          CardFactory.buildImage(img), myCard
+        )
+      }
+    }
   }
 
   let lastReqTime = 0
 
-  const crossHandler = async () => {
-    if (searchField.value.length > -1) {
+  const inputHandler = async () => {
+    if (searchField.value.length > 0) {
       const diff = 1000 
       const curReqTime = new Date().getTime()
       let data = {}
@@ -111,11 +97,15 @@ window.onload = () => {
   searchField.addEventListener('focusout', () => {
     if (searchField.value.length == 0) {
       searchForm.classList.toggle('search-active')
-      crossHandler()
+      inputHandler()
     }
   })
 
-  searchField.addEventListener('input', crossHandler)
+  searchField.addEventListener('input', inputHandler)
+  
+  // cross.onclick = () => {
+
+  // }
 
   document.addEventListener('scroll', () => {
     if (searchForm.getBoundingClientRect().top < 10) {
