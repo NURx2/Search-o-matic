@@ -1,6 +1,5 @@
-// 29656d74
-//await - каждое поле в async асинхронно? - иначе, что прерывает await
-//убирать allcards при нажатии на крестик
+const myApiKey = '29656d74'
+
 window.onload = () => {
   const CardFactory = {
     buildDefault: () => {
@@ -33,6 +32,8 @@ window.onload = () => {
   const searchField = document.getElementsByClassName('search-input')[0]
   const cross = document.getElementsByClassName('cancel-button')[0]
   const searchResult = document.getElementById('search-result')
+  const tagForm = document.getElementsByClassName('alltags')[0]
+  const tagList = []
 
   const removeChilds = anchor => {
     while (anchor.children.length != 0)
@@ -62,13 +63,20 @@ window.onload = () => {
 
   const inputHandler = async () => {
     if (searchField.value.length > 0) {
-      const diff = 1000 
+      const diff = 0 
       const curReqTime = new Date().getTime()
       let data = {}
-      if (curReqTime - lastReqTime > diff) { 
+      if (curReqTime - lastReqTime > diff) {
+        console.log('Search:', searchField.value)
         data = await fetch(
-          `http://www.omdbapi.com/?type=movie&apikey=29656d74&s=${searchField.value}`
-        ).then((r) => r.json());
+          `http://www.omdbapi.com/?type=movie&apikey=${myApiKey}&s=${searchField.value}`
+        )
+        .then((r) => r.json())
+        .catch(() => {
+          removeChilds(document.getElementById('allcards'))
+          searchResult.innerText = 'Something went wrong ¯\\_(ツ)_/¯ '
+          throw "Something went wrong in fetch"
+        });
         console.log(data)
         lastReqTime = curReqTime
       }
@@ -76,11 +84,14 @@ window.onload = () => {
         cross.classList.toggle('cancel-button-active')
       
       if (data.hasOwnProperty('totalResults')) {
-        searchResult.innerText = `Нашли ${data.totalResults} фильма`
-        populateCards(data) // TODO:
+        searchResult.innerText = `${data.totalResults} film results`
+        populateCards(data)
+      } else if (data['Error'] === 'Too many results.') { 
+        removeChilds(document.getElementById('allcards'))
+        searchResult.innerText = 'Too many results ¯\\_(ツ)_/¯ '
       } else {
         removeChilds(document.getElementById('allcards'))
-        searchResult.innerText = 'Мы не поняли о чем речь ¯\\_(ツ)_/¯ '
+        searchResult.innerText = 'Movie did not found ¯\\_(ツ)_/¯ '
       }
     } else {
       cross.classList.remove('cancel-button-active')
@@ -90,30 +101,55 @@ window.onload = () => {
   }
 
   searchField.addEventListener('focusin', () => {
-    if (searchField.value.length == 0) {
+    if (searchField.value.length == 0 && !searchForm.classList.contains('search-active')) {
       searchForm.classList.toggle('search-active')
     }
   })
   searchField.addEventListener('focusout', () => {
-    if (searchField.value.length == 0) {
+    if (searchField.value.length == 0 && searchForm.classList.contains('search-active')) {
       searchForm.classList.toggle('search-active')
-      inputHandler()
     }
   })
 
   searchField.addEventListener('input', inputHandler)
   
-  // cross.onclick = () => {
+  cross.onclick = () => {
+    searchField.value = ''
+    searchField.focus()
+    searchField.select()
+    inputHandler()
+  }
 
-  // }
+  searchField.onkeyup = async (event) => {
+    if (event.keyCode == 13) {
+      await inputHandler().catch((exc) => {
+        throw exc
+      });
+      if (tagList.indexOf(searchField.value) === -1) {
+        const tag = document.createElement('a')
+        tag.classList.add('tag')
+        tag.innerHTML = searchField.value
+        tagForm.insertBefore(tag, tagForm.children[0])
+        tag.onmousedown = function(event) { 
+          if (event.altKey) {
+            tagForm.removeChild(this)
+            tagList.splice(tagList.indexOf(this.innerHTML), 1)
+          } else {
+            console.log(this.innerHTML)
+            searchField.value = this.innerHTML
+            inputHandler()
+          }
+        }
+        tagList.unshift(searchField.value)
+      }
+    }
+  }
 
   document.addEventListener('scroll', () => {
     if (searchForm.getBoundingClientRect().top < 10) {
-      // searchForm.classList.add('search-expanded')
       searchForm.id = 'search-expanded'
     } else {
       searchForm.id = ''
-      // searchForm.classList.remove('search-expanded')
     }
   })
 }
