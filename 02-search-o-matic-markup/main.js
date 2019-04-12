@@ -35,14 +35,14 @@ window.onload = () => {
   const tagForm = document.getElementsByClassName('alltags')[0]
   const tagList = []
 
-  const removeChilds = anchor => {
+  const removeChildren = anchor => {
     while (anchor.children.length != 0)
       anchor.removeChild(anchor.children[0])
   }
 
   const populateCards = (data) => {
     let anchor = document.getElementById('allcards')
-    removeChilds(anchor)
+    removeChildren(anchor)
     const howManyToShow = Math.min(data.Search.length, 8)
 
     for (let i = 0; i != howManyToShow; ++i) {
@@ -59,27 +59,78 @@ window.onload = () => {
     }
   }
 
-  let lastReqTime = 0
+  let lastReq = ''
 
-  const inputHandler = async () => {
-    if (searchField.value.length > 0) {
-      const diff = 0 
-      const curReqTime = new Date().getTime()
-      let data = {}
-      if (curReqTime - lastReqTime > diff) {
-        console.log('Search:', searchField.value)
-        data = await fetch(
-          `http://www.omdbapi.com/?type=movie&apikey=${myApiKey}&s=${searchField.value}`
-        )
-        .then((r) => r.json())
-        .catch(() => {
-          removeChilds(document.getElementById('allcards'))
-          searchResult.innerText = 'Something went wrong ¯\\_(ツ)_/¯ '
-          throw "Something went wrong in fetch"
-        });
-        console.log(data)
-        lastReqTime = curReqTime
+  // Если вместо этого каждый раз делать debounce(inputHandler, ms), то не уничтожает таймер (Search дважды)
+  // Понимать как объект, у которого оператор () исполняет поля 
+
+  function debounce(ms, f) {
+
+    let timer = null;
+    
+    if (searchField.value !== lastReq && searchField.value.length > 0) {
+
+    }
+  
+    return function (...args) {
+      const onComplete = () => {
+        f.apply(this, args);  // this?
+        timer = null;
       }
+  
+      if (timer) {
+        clearTimeout(timer);
+      }
+  
+      timer = setTimeout(onComplete, ms);
+    };
+  }
+
+  function tagHandler() {
+    if (tagList.indexOf(searchField.value) === -1 && data.hasOwnProperty('totalResults')) {
+      const tag = document.createElement('a')
+      tag.classList.add('tag')
+      tag.innerHTML = searchField.value
+      tagForm.insertBefore(tag, tagForm.children[0])
+      tag.onmousedown = function(event) { 
+        if (event.altKey) {
+          tagForm.removeChild(this)
+          tagList.splice(tagList.indexOf(this.innerHTML), 1)
+        } else {
+          console.log(this.innerHTML)
+          searchField.value = this.innerHTML
+          inputHandler()
+        }
+      }
+      tagList.unshift(searchField.value)
+    }
+  }
+
+  const inputHandler = debounce(ms = 1800, async () => {
+
+    if (searchField === lastReq) {
+      return
+    }
+
+    if (searchField.value.length > 0) {
+      let data = {}
+      
+      lastReq = searchField.value
+
+      console.log('Search:', searchField.value)
+      
+      data = await fetch(
+        `http://www.omdbapi.com/?type=movie&apikey=${myApiKey}&s=${searchField.value}`
+      )
+      .then((r) => r.json())
+      .catch(() => {
+        removeChildren(document.getElementById('allcards'))
+        searchResult.innerText = 'Something went wrong ¯\\_(ツ)_/¯ '
+        throw "Something went wrong in fetch"
+      });
+
+      console.log(data)
+        
       if (!cross.classList.contains('cancel-button-active'))
         cross.classList.toggle('cancel-button-active')
       
@@ -87,18 +138,20 @@ window.onload = () => {
         searchResult.innerText = `${data.totalResults} film results`
         populateCards(data)
       } else if (data['Error'] === 'Too many results.') { 
-        removeChilds(document.getElementById('allcards'))
+        removeChildren(document.getElementById('allcards'))
         searchResult.innerText = 'Too many results ¯\\_(ツ)_/¯ '
       } else {
-        removeChilds(document.getElementById('allcards'))
+        removeChildren(document.getElementById('allcards'))
         searchResult.innerText = 'Movie did not found ¯\\_(ツ)_/¯ '
       }
+
+      tagHandler()
     } else {
       cross.classList.remove('cancel-button-active')
-      removeChilds(document.getElementById('allcards'))
+      removeChildren(document.getElementById('allcards'))
       searchResult.innerText = ''
     }
-  }
+  })
 
   searchField.addEventListener('focusin', () => {
     if (searchField.value.length == 0 && !searchForm.classList.contains('search-active')) {
@@ -122,26 +175,10 @@ window.onload = () => {
 
   searchField.onkeyup = async (event) => {
     if (event.keyCode == 13) {
-      await inputHandler().catch((exc) => {
-        throw exc
-      });
-      if (tagList.indexOf(searchField.value) === -1) {
-        const tag = document.createElement('a')
-        tag.classList.add('tag')
-        tag.innerHTML = searchField.value
-        tagForm.insertBefore(tag, tagForm.children[0])
-        tag.onmousedown = function(event) { 
-          if (event.altKey) {
-            tagForm.removeChild(this)
-            tagList.splice(tagList.indexOf(this.innerHTML), 1)
-          } else {
-            console.log(this.innerHTML)
-            searchField.value = this.innerHTML
-            inputHandler()
-          }
-        }
-        tagList.unshift(searchField.value)
-      }
+      await inputHandler(ms = 0)  // does not work
+      // .catch((exc) => {
+      //   throw exc
+      // });
     }
   }
 
