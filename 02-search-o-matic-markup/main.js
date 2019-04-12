@@ -61,9 +61,6 @@ window.onload = () => {
 
   let lastReq = ''
 
-  // Если вместо этого каждый раз делать debounce(inputHandler, ms), то не уничтожает таймер (Search дважды)
-  // Понимать как объект, у которого оператор () исполняет поля 
-
   function debounce(ms, f) {
 
     let timer = null;
@@ -74,7 +71,7 @@ window.onload = () => {
   
     return function (...args) {
       const onComplete = () => {
-        f.apply(this, args);  // this?
+        f.apply(this, args);
         timer = null;
       }
   
@@ -175,10 +172,7 @@ window.onload = () => {
 
   searchField.onkeyup = async (event) => {
     if (event.keyCode == 13) {
-      await inputHandler(ms = 0)  // does not work
-      // .catch((exc) => {
-      //   throw exc
-      // });
+      await inputHandler(0)
     }
   }
 
