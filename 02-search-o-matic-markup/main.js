@@ -28,11 +28,24 @@ window.onload = () => {
     }
   }
 
+  const loader = document.createElement('img')
+  loader.classList.add('loader')
+  loader.src = 'loader.svg'
+  let isLoaderActive = false
+
+  function removeLoader() {
+    if (isLoaderActive) {
+      content.removeChild(loader)
+      isLoaderActive = false
+    }
+  }
+
   const searchForm = document.getElementsByClassName('search')[0]
   const searchField = document.getElementsByClassName('search-input')[0]
   const cross = document.getElementsByClassName('cancel-button')[0]
   const searchResult = document.getElementById('search-result')
   const tagForm = document.getElementsByClassName('alltags')[0]
+  const content = document.getElementsByClassName('content')[0]
   const tagList = []
 
   const removeChildren = anchor => {
@@ -52,24 +65,39 @@ window.onload = () => {
       const img = document.createElement('img')
       img.src = data.Search[i].Poster
       img.onload = () => {
-        anchor.replaceChild(
-          CardFactory.buildImage(img), myCard
-        )
+        if (anchor.contains(myCard)) {
+          anchor.replaceChild(CardFactory.buildImage(img), myCard)
+        }
       }
     }
   }
 
   let lastReq = ''
 
-  function debounce(ms, f) {
+  function debounce(f) {
 
     let timer = null;
-    
-    if (searchField.value !== lastReq && searchField.value.length > 0) {
-
-    }
   
-    return function (...args) {
+    return function(ms, ...args) {
+      ms = 1800
+
+
+      if (!cross.classList.contains('cancel-button-active')) {
+        cross.classList.toggle('cancel-button-active')
+      }
+
+      console.log(searchField.value, lastReq)
+      if (!isLoaderActive && searchField.value !== lastReq && searchField.value.length > 0) {
+        content.insertBefore(loader, searchResult)
+        isLoaderActive = true
+        removeChildren(document.getElementById('allcards'))
+        searchResult.innerText = ''
+      }
+
+      if (searchField.value === lastReq) {
+        removeLoader()
+      }
+
       const onComplete = () => {
         f.apply(this, args);
         timer = null;
@@ -83,11 +111,11 @@ window.onload = () => {
     };
   }
 
-  function tagHandler() {
-    if (tagList.indexOf(searchField.value) === -1 && data.hasOwnProperty('totalResults')) {
+  function tagHandler(curSearch) {
+    if (tagList.indexOf(curSearch) === -1) {
       const tag = document.createElement('a')
       tag.classList.add('tag')
-      tag.innerHTML = searchField.value
+      tag.innerHTML = curSearch
       tagForm.insertBefore(tag, tagForm.children[0])
       tag.onmousedown = function(event) { 
         if (event.altKey) {
@@ -95,22 +123,24 @@ window.onload = () => {
           tagList.splice(tagList.indexOf(this.innerHTML), 1)
         } else {
           console.log(this.innerHTML)
-          searchField.value = this.innerHTML
+          searchField.curSearch = this.innerHTML
           inputHandler()
         }
       }
-      tagList.unshift(searchField.value)
+      tagList.unshift(searchField.curSearch)
     }
   }
 
-  const inputHandler = debounce(ms = 1800, async () => {
+  const inputHandler = debounce(async () => {
 
-    if (searchField === lastReq) {
+    if (searchField.value === lastReq) {
+      removeLoader()
       return
     }
 
     if (searchField.value.length > 0) {
       let data = {}
+      let currentSearch = searchField.value
       
       lastReq = searchField.value
 
@@ -121,19 +151,20 @@ window.onload = () => {
       )
       .then((r) => r.json())
       .catch(() => {
+        removeLoader()
         removeChildren(document.getElementById('allcards'))
         searchResult.innerText = 'Something went wrong ¯\\_(ツ)_/¯ '
         throw "Something went wrong in fetch"
       });
 
       console.log(data)
-        
-      if (!cross.classList.contains('cancel-button-active'))
-        cross.classList.toggle('cancel-button-active')
+
+      removeLoader()
       
       if (data.hasOwnProperty('totalResults')) {
         searchResult.innerText = `${data.totalResults} film results`
         populateCards(data)
+        tagHandler(currentSearch)
       } else if (data['Error'] === 'Too many results.') { 
         removeChildren(document.getElementById('allcards'))
         searchResult.innerText = 'Too many results ¯\\_(ツ)_/¯ '
@@ -141,9 +172,9 @@ window.onload = () => {
         removeChildren(document.getElementById('allcards'))
         searchResult.innerText = 'Movie did not found ¯\\_(ツ)_/¯ '
       }
-
-      tagHandler()
     } else {
+      removeLoader()
+      lasReq = ''
       cross.classList.remove('cancel-button-active')
       removeChildren(document.getElementById('allcards'))
       searchResult.innerText = ''
@@ -167,12 +198,12 @@ window.onload = () => {
     searchField.value = ''
     searchField.focus()
     searchField.select()
-    inputHandler()
+    inputHandler()  // zero waiting
   }
 
-  searchField.onkeyup = async (event) => {
-    if (event.keyCode == 13) {
-      await inputHandler(0)
+  searchField.onkeyup = (event) => {
+    if (event.keyCode === 13) {
+      inputHandler()  // zero waiting
     }
   }
 
