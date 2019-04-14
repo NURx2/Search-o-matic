@@ -1,7 +1,18 @@
 const myApiKey = '29656d74'
 
 window.onload = () => {
-  const CardFactory = {
+  const searchForm = document.getElementsByClassName('search')[0]
+  const searchField = document.getElementsByClassName('search-input')[0]
+  const cross = document.getElementsByClassName('cancel-button')[0]
+  const searchResult = document.getElementById('search-result')
+  const tagForm = document.getElementsByClassName('alltags')[0]
+  const content = document.getElementsByClassName('content')[0]
+  
+  const tagList = []
+
+  let lastReq = ''
+
+  const cardFactory = {
     buildDefault: () => {
       const card = document.createElement('div')
       card.classList.add('card')
@@ -14,16 +25,17 @@ window.onload = () => {
       card.appendChild(img)
       return card
     },
-    buildText: (header, line1, line2) => {
+    buildText: (header, line2) => {
       const card = document.createElement('div')
       card.classList.add('card')
       card.innerHTML = 
       `
       <div class="text-line1">${header}</div>
       <div class="text-line-flex">
-      <div class="text-line2"></div>
-      <div class="text-line-year">${line2}</div>
-      `
+        <div class="empty-line"></div>
+        <div class="text-line-year">${line2}</div>
+      </div>
+      `  // empty line = jenre in past 
       return card
     }
   }
@@ -33,20 +45,12 @@ window.onload = () => {
   loader.src = 'loader.svg'
   let isLoaderActive = false
 
-  function removeLoader() {
+  const removeLoader = () => {
     if (isLoaderActive) {
       content.removeChild(loader)
       isLoaderActive = false
     }
   }
-
-  const searchForm = document.getElementsByClassName('search')[0]
-  const searchField = document.getElementsByClassName('search-input')[0]
-  const cross = document.getElementsByClassName('cancel-button')[0]
-  const searchResult = document.getElementById('search-result')
-  const tagForm = document.getElementsByClassName('alltags')[0]
-  const content = document.getElementsByClassName('content')[0]
-  const tagList = []
 
   const removeChildren = anchor => {
     while (anchor.children.length != 0)
@@ -56,50 +60,42 @@ window.onload = () => {
   const populateCards = (data) => {
     let anchor = document.getElementById('allcards')
     removeChildren(anchor)
+    localStorage.getItem('searchValue')
     const howManyToShow = Math.min(data.Search.length, 8)
 
     for (let i = 0; i != howManyToShow; ++i) {
-      const myCard = CardFactory.buildText(data.Search[i].Title, data.Search[i].Type, data.Search[i].Year)
+      const myCard = cardFactory.buildText(data.Search[i].Title, data.Search[i].Year)
       anchor.appendChild(myCard)
 
       const img = document.createElement('img')
       img.src = data.Search[i].Poster
       img.onload = () => {
         if (anchor.contains(myCard)) {
-          anchor.replaceChild(CardFactory.buildImage(img), myCard)
+          anchor.replaceChild(cardFactory.buildImage(img), myCard)
         }
       }
     }
   }
 
-  let lastReq = ''
-
-  function debounce(f) {
-
+  const debounce = (f) => {
     let timer = null;
   
-    return function(ms, ...args) {
-      ms = 1800
-
+    return function(ms) {
+      if (ms === undefined) { ms = 1800 }
 
       if (!cross.classList.contains('cancel-button-active')) {
         cross.classList.toggle('cancel-button-active')
       }
 
-      console.log(searchField.value, lastReq)
-      if (!isLoaderActive && searchField.value !== lastReq && searchField.value.length > 0) {
+      if (!isLoaderActive && searchField.value.length > 0) {
         content.insertBefore(loader, searchResult)
         isLoaderActive = true
         removeChildren(document.getElementById('allcards'))
         searchResult.innerText = ''
       }
 
-      if (searchField.value === lastReq) {
-        removeLoader()
-      }
-
       const onComplete = () => {
-        f.apply(this, args);
+        f.call(this);
         timer = null;
       }
   
@@ -111,37 +107,50 @@ window.onload = () => {
     };
   }
 
-  function tagHandler(curSearch) {
+  const tagHandler = (curSearch) => {
     if (tagList.indexOf(curSearch) === -1) {
       const tag = document.createElement('a')
       tag.classList.add('tag')
       tag.innerHTML = curSearch
+
+      tagList.unshift(curSearch)
       tagForm.insertBefore(tag, tagForm.children[0])
+      
       tag.onmousedown = function(event) { 
         if (event.altKey) {
           tagForm.removeChild(this)
           tagList.splice(tagList.indexOf(this.innerHTML), 1)
         } else {
-          console.log(this.innerHTML)
-          searchField.curSearch = this.innerHTML
+          searchField.value = this.innerHTML
           inputHandler()
         }
       }
-      tagList.unshift(searchField.curSearch)
+    }
+  }
+
+  const dealWithData = (data, currentSearch) => {
+    removeLoader()
+      
+    if (data.hasOwnProperty('totalResults')) {
+      searchResult.innerText = `${data.totalResults} film results`
+      populateCards(data)
+      tagHandler(currentSearch)
+    } else if (data['Error'] === 'Too many results.') { 
+      removeChildren(document.getElementById('allcards'))
+      searchResult.innerText = 'Too many results ¯\\_(ツ)_/¯ '
+    } else {
+      removeChildren(document.getElementById('allcards'))
+      searchResult.innerText = 'Movie did not found ¯\\_(ツ)_/¯ '
     }
   }
 
   const inputHandler = debounce(async () => {
-
-    if (searchField.value === lastReq) {
-      removeLoader()
-      return
-    }
-
     if (searchField.value.length > 0) {
       let data = {}
       let currentSearch = searchField.value
-      
+
+      localStorage.setItem('searchText', currentSearch)
+
       lastReq = searchField.value
 
       console.log('Search:', searchField.value)
@@ -157,61 +166,67 @@ window.onload = () => {
         throw "Something went wrong in fetch"
       });
 
+      localStorage.setItem('data', JSON.stringify(data))
+
       console.log(data)
 
-      removeLoader()
-      
-      if (data.hasOwnProperty('totalResults')) {
-        searchResult.innerText = `${data.totalResults} film results`
-        populateCards(data)
-        tagHandler(currentSearch)
-      } else if (data['Error'] === 'Too many results.') { 
-        removeChildren(document.getElementById('allcards'))
-        searchResult.innerText = 'Too many results ¯\\_(ツ)_/¯ '
-      } else {
-        removeChildren(document.getElementById('allcards'))
-        searchResult.innerText = 'Movie did not found ¯\\_(ツ)_/¯ '
-      }
+      dealWithData(data, currentSearch)
     } else {
+      console.log('here')
       removeLoader()
       lasReq = ''
       cross.classList.remove('cancel-button-active')
       removeChildren(document.getElementById('allcards'))
       searchResult.innerText = ''
+      localStorage.clear()
     }
   })
 
   searchField.addEventListener('focusin', () => {
-    if (searchField.value.length == 0 && !searchForm.classList.contains('search-active')) {
-      searchForm.classList.toggle('search-active')
-    }
+    searchForm.classList.add('search-active')
   })
   searchField.addEventListener('focusout', () => {
-    if (searchField.value.length == 0 && searchForm.classList.contains('search-active')) {
-      searchForm.classList.toggle('search-active')
+    if (searchField.value.length === 0) {
+      searchForm.classList.remove('search-active')
     }
   })
 
-  searchField.addEventListener('input', inputHandler)
+  searchField.addEventListener('input', () => {
+    searchField.value.length > 0 ? inputHandler() : inputHandler(0)
+  })
   
   cross.onclick = () => {
     searchField.value = ''
     searchField.focus()
     searchField.select()
-    inputHandler()  // zero waiting
+    inputHandler(0)
   }
 
   searchField.onkeyup = (event) => {
     if (event.keyCode === 13) {
-      inputHandler()  // zero waiting
+      inputHandler(0)
     }
   }
 
   document.addEventListener('scroll', () => {
-    if (searchForm.getBoundingClientRect().top < 10) {
+    if (searchForm.getBoundingClientRect().top < 15) {
       searchForm.id = 'search-expanded'
     } else {
       searchForm.id = ''
     }
   })
+
+  const lsSearchValue = localStorage.getItem('searchText') 
+
+  if (lsSearchValue) {
+    searchField.focus()
+    searchField.select()
+    searchField.value = lsSearchValue
+    const lsData = JSON.parse(localStorage.getItem('data'))
+    if (lsData) {
+      dealWithData(lsData, lsSearchValue)
+    } else {
+      inputHandler()
+    }
+  }
 }
