@@ -1,146 +1,31 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>Тайтл</title>
+		<title>HW2</title>
 		<meta charset="utf-8">
 		<link rel="stylesheet" href="style.css">
-		<link href="https://fonts.googleapis.com/css?family=Roboto:300,400" rel="stylesheet">
+		<script src = './main.js'></script>
 	</head>
 	<body>
-		<div id="anchor" class="authorContainer">
-			<img src="https://cs.pikabu.ru/post_img/big/2013/11/26/4/1385435537_1275598961.jpg" alt="Аффтар" id="author">
-			<div class="whoAmI">
-				<div>
-					<a> <b>Кот Альбертович</b> </a> <br/>
-					<a> Фронтенд разработчик и студент-мемолог </a>
+		<div class="wrapper">
+			<div class="content">
+				<img src="./svg/logo—tp.svg" alt="ТП" class="logo">
+				<div class="search">
+					<div class = "in-search">
+						<button type="sumbit" class="search-button">
+							<img src="./svg/search.svg" class="search-svg">
+						</button>
+						<input type="text" placeholder="Search movies by title" class="search-input">
+						<button type="submit" class="cancel-button">
+							<img src="./svg/Vector.svg" class="cancel-svg">
+						</button>
+					</div>
 				</div>
+				<div class="alltags"></div>
+				<div class = 'search-result' id = 'search-result'></div>
+				<div id="allcards"></div>
 			</div>
+			<footer class = 'footer'>© 2019 Тinkoff Пrokat</footer>
 		</div>
-		<br/>
-		<hr/>
-		<h1>Самый главный заголовок</h1>
-			<h2>Заголовок поменьше</h2>
-				<h3>Мем</h3>
-					<p>
-						<b>Мем</b> (англ. <i>meme</i>) — единица <a href="https://ru.wikipedia.org/wiki/%D0%9A%D1%83%D0%BB%D1%8C%D1%82%D1%83%D1%80%D0%B0" title="Культура" target="_blank">культурной</a> информации. Мемом может считаться любая идея, символ, манера или образ действия, осознанно или неосознанно передаваемые от человека к человеку посредством речи, письма, видео, ритуалов, жестов и т. д. Концепция мема и сам термин были предложены эволюционным биологом Ричардом Докинзом в 1976 году в книге «Эгоистичный ген». Докинз предложил идею о том, что <u>вся культурная информация состоит из базовых единиц — мемов</u>, точно так же как биологическая информация состоит из генов; и так же как гены, мемы подвержены естественному отбору, мутации и искусственной селекции. На основе этой идеи Докинза возникла дисциплина меметика, в настоящее время имеющая спорный научный статус.
-					</p>
-					<div id="quote">
-						<blockquote id="q">
-							Мәче — эт белән бер рәттән иң таралган йорт хайваннарының берсе, «компаньон-хайван». Ерткычлар отрядының мәчеләр гаиләсенә керә. Элек аерым биологик төр булып саналаса, бүгенге көндә исә урман мәчесенең астөре дип исәпләнә.
-
-							Мәче аралашканда киң диапозонлы тавыш сигналлары, феромоннар, хәрәкәт кулланып социаль хайван булып тора. Мәче үзе генә ауга йөрүче хайван, нигездә кимерүчеләрне һәм башка вак хайваннарны аулый.
-						</blockquote>
-					</div>
-					<p>
-						По мнению Докинза, подобно генам, <b>мемы</b> — это репликаторы (англ. <i>replicators</i>), то есть объекты, которые для размножения копируют сами себя. Мемы могут размножаться по воле или помимо воли своего носителя. <u>Для мемов выживание зависит от наличия по крайней мере одного носителя, а успешность воспроизводства зависит от окружающей культурной среды и от наличия такого носителя, который намеренно пытается распространять мем.</u> Информационное содержание конкретного мема также влияет на ту вероятность, с которой он будет скопирован. Мемы могут видоизменяться, комбинироваться и разделяться, чтобы формировать новые мемы. Они участвуют в борьбе друг с другом за ресурсы (умы людей-носителей), и, в результате, подвергаются естественному отбору.
-					</p>
-					<p>
-						<b>Меме́тика</b> — теория содержания сознания и эволюции культуры, построенная по аналогии с генетикой и биологической теорией эволюции Дарвина и берущая начало из концепции мема, предложенной биологом Ричардом Докинзом в книге «Эгоистичный ген» (1976). Сторонники меметики описывают её как подход к эволюционным моделям передачи культурной информации на основе концепции мемов.
-					</p>
-					<div class="container">
-						<div>
-						Примеры мемов:
-						<ul>
-							<li class="lili">IMHO</li>
-							<li class="lili">Анонимус</li>
-							<li class="lili">Аффтар</li>
-							<li class="lili">Баян</li>
-						</ul>
-						А вот примеры мемов с циферками:
-						<ol>
-							<li>Британские ученые</li>
-							<li>Валера, настало твое время</li>
-							<li>Капитан очевидностб</li>
-						</ol>
-						</div>
-						<img src="https://memepedia.ru/wp-content/uploads/2017/09/%D0%BD%D0%B5-%D0%BC%D0%BE%D0%B3%D1%83-%D0%BD%D0%B8%D1%87%D0%B5%D0%B3%D0%BE-%D0%B4%D0%B5%D0%BB%D0%B0%D1%82%D1%8C-%D1%83-%D0%BC%D0%B5%D0%BD%D1%8F-%D0%BB%D0%B0%D0%BF%D0%BA%D0%B8.jpg" alt="Лапки два" id="secondcat">
-					</div>
-		<h2>Заголовок поменьше</h2>
-			<h3>Еще мемы</h3>
-				<p> 
-					<b>Мем</b> (англ. <i>meme</i>, читается как мим), также известный как медиавирус — это идея, образ или любой другой объект нематериального мира, который передаётся от человека к человеку вербально, невербально, через интернет или как угодно ещё. <u>Мем может видоизменяться внутри носителя, оказывать влияние на него и общество в целом.</u> Если смотреть шире, то существует такой механизм передачи и хранения культурной информации, использующий эгоистичные сущности, пожирающие мозги (мемы) как её переносчик, а людей — как ячейки памяти.
-				</p>
-				<p>
-					<u>Специальное место для</u> "Учимся работать с &lt;HTML&gt;" 
-				</p>
-				<div class="container">
-					<img src="https://memepedia.ru/wp-content/uploads/2017/09/%D0%BD%D0%B5-%D0%BC%D0%BE%D0%B3%D1%83-%D0%BD%D0%B8%D1%87%D0%B5%D0%B3%D0%BE-%D0%B4%D0%B5%D0%BB%D0%B0%D1%82%D1%8C-%D1%83-%D0%BC%D0%B5%D0%BD%D1%8F-%D0%BB%D0%B0%D0%BF%D0%BA%D0%B8.jpg" alt="Лапки раз">
-					<table>
-						<caption>Prices for memes in London</caption>
-						<thead>
-							<tr>
-								<td></td>
-								<th>Likes</th>
-								<th>Keks</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<th>Doggy</th>
-								<td>100</td>
-								<td>150</td>
-							</tr>
-							<tr>
-								<th>OMG</th>
-								<td>200</td>
-								<td>250</td>
-							</tr>
-						</tbody>
-						<tfoot>
-							<tr>
-								<th>Difference</th>
-								<td>100</td>
-								<td>100</td>
-							</tr>
-						</tfoot>
-					</table>
-					<img src="https://memepedia.ru/wp-content/uploads/2017/09/%D0%BD%D0%B5-%D0%BC%D0%BE%D0%B3%D1%83-%D0%BD%D0%B8%D1%87%D0%B5%D0%B3%D0%BE-%D0%B4%D0%B5%D0%BB%D0%B0%D1%82%D1%8C-%D1%83-%D0%BC%D0%B5%D0%BD%D1%8F-%D0%BB%D0%B0%D0%BF%D0%BA%D0%B8.jpg" alt="Лапки три">
-				</div>
-				<form action="" class="sendus">
-					<div class="form-row">
-						<label for="name">Ваше мимя</label><input type="text" id="name" required>
-					</div>
-					<div class="form-row">
-						<label for="email">Ваше мыло</label><input type="email" id="email" required>
-					</div>
-						<div class="form-row">
-						<label for="message">Ваш мем</label><textarea rows="5" id="message" required></textarea>
-					</div>
-					<div class="form-row">
-						<input type="submit" value="Отправить сообщение">
-					</div>
-				</form>
-				<div class='to-top-div' id='to-top-wrapper'>
-					<div id='to-top-wrapper-inner'>
-						<div><img src='arrow.svg' alt='go top image' id='left-top-arrow' /></div>
-						<button class='to-top-button' onclick="toTop()">Автор</button>
-						<div><img src='arrow.svg' alt='go top image' id='right-top-arrow' /></div>
-					</div>
-				</div>
-		<script>
-			window.onload = () => {
-				let lArrow = document.getElementById('left-top-arrow')
-				let rArrow = document.getElementById('right-top-arrow')
-				let mxCounter = 100
-				while (document.getElementById('to-top-wrapper').clientWidth - 100 >
-					document.getElementById('to-top-wrapper-inner').clientWidth) {
-					let child = document.createElement('img')
-					child.src = 'arrow.svg'
-					lArrow.parentElement.appendChild(child)
-
-					child = document.createElement('img')
-					child.src = 'arrow.svg'
-					rArrow.parentElement.appendChild(child)
-					mxCounter -= 1
-					if (mxCounter === 0) break
-				}
-			}
-			function toTop() {
-				window.scrollTo({
-				    top: document.getElementById('anchor').offsetTop,
-				    behavior: "smooth"
-				})
-			}
-		</script>
 	</body>
 </html>
