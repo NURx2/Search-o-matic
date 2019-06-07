@@ -42,7 +42,7 @@ window.onload = () => {
 
   const loader = document.createElement('img')
   loader.classList.add('loader')
-  loader.src = 'loader.svg'
+  loader.src = './svg/loader.svg'
   let isLoaderActive = false
 
   const removeLoader = () => {
