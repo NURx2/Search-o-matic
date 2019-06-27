@@ -1,5 +1,39 @@
 # Search-o-matic
-## Реализовано 4 состояния (единовременно отображается лишь одно из них):
+<img src="./search.gif">
+Search for movies by title.
+Tag list, search result and search input are saved in a local storage.
+
+<img src="./tags.gif">
+Succesfull results are joining the tag list.
+Use |Enter| for the faster search.
+Use |Alt| + |Click| for removing a tag.
+
+##English:
+**There are 4 states (only one of them is showing)**
+- Input is not active
+- Results of a search
+- No results found
+- The page is scrolled down
+
+**The following components are implemented:**
+- Header
+- Input
+- Results
+- Footer
+
+**Input component has 3 states:**
+- Default
+- In focus 
+- Full width
+
+**Results component has 3 states:**
+- The search has not been performed
+- Smth found
+- Not found
+
+##Русский:
+
+**Реализовано 4 состояния (единовременно отображается лишь одно из них):**
 - Поиск ещё не выполнялся
 - Поиск с результатами
 - Поиск без результатов
