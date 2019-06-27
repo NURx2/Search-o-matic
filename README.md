@@ -1,14 +1,19 @@
 # Search-o-matic
 <img src="./search.gif">
+
 Search for movies by title.
+
 Tag list, search result and search input are saved in a local storage.
 
 <img src="./tags.gif">
+
 Succesfull results are joining the tag list.
+
 Use |Enter| for the faster search.
+
 Use |Alt| + |Click| for removing a tag.
 
-##English:
+## English:
 **There are 4 states (only one of them is showing)**
 - Input is not active
 - Results of a search
@@ -31,7 +36,7 @@ Use |Alt| + |Click| for removing a tag.
 - Smth found
 - Not found
 
-##Русский:
+## Русский:
 
 **Реализовано 4 состояния (единовременно отображается лишь одно из них):**
 - Поиск ещё не выполнялся
