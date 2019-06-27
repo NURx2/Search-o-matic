@@ -7,7 +7,7 @@ Tag list, search result and search input are saved in a local storage.
 
 <img src="./tags.gif">
 
-Succesfull results are joining the tag list.
+Successful results are joining the tag list.
 
 Use |Enter| for the faster search.
 
