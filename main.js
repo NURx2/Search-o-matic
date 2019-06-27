@@ -140,7 +140,7 @@ window.onload = () => {
       searchResult.innerText = 'Too many results ¯\\_(ツ)_/¯ '
     } else {
       removeChildren(document.getElementById('allcards'))
-      searchResult.innerText = 'Movie did not found ¯\\_(ツ)_/¯ '
+      searchResult.innerText = 'No results found ¯\\_(ツ)_/¯ '
     }
   }
 
