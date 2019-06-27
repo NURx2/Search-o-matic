@@ -13,7 +13,6 @@ Use |Enter| for the faster search.
 
 Use |Alt| + |Click| for removing a tag.
 
-## English:
 **There are 4 states (only one of them is showing)**
 - Input is not active
 - Results of a search
@@ -35,8 +34,7 @@ Use |Alt| + |Click| for removing a tag.
 - The search has not been performed
 - Smth found
 - Not found
-
-## Русский:
+----
 
 **Реализовано 4 состояния (единовременно отображается лишь одно из них):**
 - Поиск ещё не выполнялся
